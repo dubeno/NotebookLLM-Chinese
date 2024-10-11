@@ -1,0 +1,617 @@
+<html><head>
+<title>智能播客生成系统 - 深度情感访谈</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Google+Sans+Display:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary-color: #202124;
+    --secondary-color: #33542d;
+    --background-color: #000000;
+    --text-color: #e8eaed;
+    --card-background: #202124;
+    --input-background: #303134;
+    --button-color: #e6f4e4;
+    --button-text-color: #202124;
+  }
+  body {
+    font-family: 'Google Sans', sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--background-color);
+    margin: 0;
+    padding: 0;
+  }
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+  h1, h2, h3 {
+    font-family: 'Google Sans Display', sans-serif;
+    color: var(--text-color);
+  }
+  h1 {
+    font-size: 3em;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  h2 {
+    font-size: 2em;
+    margin-top: 40px;
+  }
+  .card {
+    background-color: var(--card-background);
+    border-radius: 8px;
+    padding: 30px;
+    margin-bottom: 30px;
+  }
+  .input-group {
+    margin-bottom: 25px;
+  }
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-color);
+  }
+  input[type="text"], textarea, select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--input-background);
+    border-radius: 4px;
+    background-color: var(--input-background);
+    color: var(--text-color);
+    font-size: 16px;
+  }
+  button {
+    background-color: var(--button-color);
+    color: var(--button-text-color);
+    border: none;
+    padding: 12px 24px;
+    font-size: 16px;
+    border-radius: 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+  }
+  button:hover {
+    background-color: #d1e6cf;
+  }
+  .dialogue-message {
+    background-color: var(--input-background);
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+  }
+  .dialogue-speaker {
+    font-weight: bold;
+    color: var(--text-color);
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .emotion-tag {
+    display: inline-block;
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8em;
+  }
+  #audioPlaylist {
+    list-style-type: none;
+    padding: 0;
+  }
+  #audioPlaylist li {
+    background-color: var(--input-background);
+    margin-bottom: 15px;
+    padding: 15px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+  }
+  #audioPlaylist button {
+    margin-right: 15px;
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+  }
+  .progress-bar {
+    width: 100%;
+    height: 8px;
+    background-color: var(--input-background);
+    margin-top: 20px;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .progress {
+    width: 0%;
+    height: 100%;
+    background-color: var(--secondary-color);
+    transition: width 0.5s ease;
+  }
+  .notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px;
+    border-radius: 4px;
+    color: white;
+    z-index: 1000;
+  }
+  .notification.info {
+    background-color: var(--secondary-color);
+  }
+  .notification.error {
+    background-color: #dc3545;
+  }
+  .notification.warning {
+    background-color: #ffc107;
+  }
+  .loading-animation {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  .spinner {
+    border: 4px solid var(--input-background);
+    border-top: 4px solid var(--secondary-color);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  .settings-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: var(--button-color);
+    color: var(--button-text-color);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 24px;
+  }
+  .settings-modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+    display: none;
+    justify-content: center;
+    align-items: center;
+  }
+  .settings-content {
+    background-color: var(--card-background);
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+    max-width: 80%;
+  }
+  #backgroundMusicSection {
+    margin-top: 40px;
+  }
+  #musicVisualizer {
+    width: 50px;
+    height: 50px;
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+  }
+  #rotatingMusicIcon {
+    width: 100%;
+    height: 100%;
+    animation: rotate 5s linear infinite;
+    animation-play-state: paused;
+  }
+  @keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  .marquee {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .marquee p {
+    display: inline-block;
+    padding-left: 100%;
+    animation: marquee 15s linear infinite;
+  }
+  @keyframes marquee {
+    0% {
+      transform: translate(0, 0);
+    }
+    100% {
+      transform: translate(-100%, 0);
+    }
+  }
+  .background-music-icon {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 300px;
+    opacity: 0.3;
+    pointer-events: none;
+    z-index: -1;
+  }
+  .background-music-icon img {
+    width: 100%;
+    height: 100%;
+    animation: rotate 20s linear infinite;
+  }
+  .auto-play-btn {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+  }
+  #output h2 {
+    cursor: pointer;
+  }
+  #toggleIcon {
+    float: right;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>情感驿站</h1>
+    <h2>有温度的AI深度情感访谈栏目</h2>
+    
+    <div class="card">
+      <div class="input-group">
+        <label for="topic">情感话题</label>
+        <input type="text" id="topic" placeholder="例如：婚姻对女人意味着什么？" value="婚姻对女人意味着什么？">
+      </div>
+      
+      <div class="input-group">
+        <label for="guestBackground">访谈嘉宾背景</label>
+        <textarea id="guestBackground" rows="3" placeholder="简要描述嘉宾的背景，如年龄、职业、婚姻状况等..."></textarea>
+      </div>
+      
+      <div class="input-group">
+        <label for="expertType">情感专家类型</label>
+        <select id="expertType">
+          <option value="psychologist">心理学家</option>
+          <option value="relationshipCounselor">关系咨询师</option>
+          <option value="sociologist">社会学家</option>
+          <option value="familyTherapist">家庭治疗师</option>
+        </select>
+      </div>
+      
+      <button onclick="generateInterview()">生成深度访谈</button>
+      <div id="loadingAnimation" class="loading-animation" style="display:none;">
+        <div class="spinner"></div>
+        <p>正在生成深度访谈，请稍候...</p>
+      </div>
+    </div>
+    
+    <div id="output" class="card" style="display:none;">
+      <h2 onclick="toggleInterviewContent()">访谈内容 <span id="toggleIcon">▼</span></h2>
+      <div id="interviewContent" style="display:block;"></div>
+    </div>
+
+    <div id="audioSection" class="card" style="display:none;">
+      <h2>播客音频</h2>
+      <button onclick="generatePodcast()" id="podcastBtn">生成播客音频</button>
+      <div id="podcastContent" class="marquee"><p></p></div>
+      <ul id="audioPlaylist"></ul>
+      <div class="progress-bar">
+        <div class="progress" id="audioProgress"></div>
+      </div>
+      <button onclick="startAutoPlay()" id="autoPlayBtn" class="auto-play-btn" style="display:none;">自动播放全部</button>
+    </div>
+    
+    <div id="backgroundMusicSection" class="card">
+      <h2>背景音乐</h2>
+      <div id="musicControls" style="display:none; text-align: center; margin-top: 20px;">
+        <button id="playPauseMusic">播放/暂停</button>
+        <input type="range" id="volumeControl" min="0" max="1" step="0.1" value="0.5">
+      </div>
+    </div>
+  </div>
+
+  <div class="settings-icon" onclick="openSettings()">⚙️</div>
+
+  <div id="settingsModal" class="settings-modal">
+    <div class="settings-content">
+      <span class="close" onclick="closeSettings()">&times;</span>
+      <h2>API设置</h2>
+      <div class="input-group">
+        <label for="apiKey">API密钥</label>
+        <input type="text" id="apiKey" placeholder="输入您的API密钥">
+      </div>
+      <div class="input-group">
+        <label for="voiceApiKey">语音API密钥</label>
+        <input type="text" id="voiceApiKey" placeholder="输入您的语音API密钥">
+      </div>
+      <div class="input-group">
+        <label for="backgroundMusicUpload">上传背景音乐</label>
+        <input type="file" id="backgroundMusicUpload" accept="audio/*">
+      </div>
+      <button onclick="saveSettings()">保存</button>
+    </div>
+  </div>
+
+  <div id="musicVisualizer" class="music-visualizer">
+    <div id="backgroundMusicIcon" class="background-music-icon" style="display:none;">
+      <img src="https://oss-cnsq01.cdsgss.com/maas-5/data/ac2b34cb-0084-4665-bb6b-915e0151bdca/Background%20Music_1024x1024xaBmlvt5i1xDpfRvR8xda22e88303d94.jpg?AWSAccessKeyId=ef55cb62ff7511edb70f46ae5a5d3b50&Signature=DIW1CgIjY0SGBbSwhIffZpfCedY%3D&Expires=2042105341" alt="Background Music">
+    </div>
+    <img src="https://oss-cnsq01.cdsgss.com/maas-5/data/ac2b34cb-0084-4665-bb6b-915e0151bdca/Background%20Music_1024x1024xaBmlvt5i1xDpfRvR8xda22e88303d94.jpg?AWSAccessKeyId=ef55cb62ff7511edb70f46ae5a5d3b50&Signature=DIW1CgIjY0SGBbSwhIffZpfCedY%3D&Expires=2042105341" alt="Music Icon" id="rotatingMusicIcon">
+  </div>
+
+  <script>
+    let interviewDialogue = [];
+    let audioPlayer = new Audio();
+    let currentAudioIndex = 0;
+    let audioUrls = [];
+    let backgroundMusic = new Audio();
+    let API_KEY = localStorage.getItem('apiKey') || '';
+    let VOICE_API_KEY = localStorage.getItem('voiceApiKey') || '';
+
+    function openSettings() {
+      document.getElementById('settingsModal').style.display = 'flex';
+      document.getElementById('apiKey').value = API_KEY;
+      document.getElementById('voiceApiKey').value = VOICE_API_KEY;
+    }
+
+    function closeSettings() {
+      document.getElementById('settingsModal').style.display = 'none';
+    }
+
+    function saveSettings() {
+      API_KEY = document.getElementById('apiKey').value;
+      VOICE_API_KEY = document.getElementById('voiceApiKey').value;
+      localStorage.setItem('apiKey', API_KEY);
+      localStorage.setItem('voiceApiKey', VOICE_API_KEY);
+      closeSettings();
+      showNotification('设置已保存', 'info');
+    }
+
+    async function generateInterview() {
+      const topic = document.getElementById('topic').value;
+      const guestBackground = document.getElementById('guestBackground').value;
+      const expertType = document.getElementById('expertType').value;
+      
+      if (!topic || !guestBackground) {
+        showNotification('请输入话题和嘉宾背景', 'warning');
+        return;
+      }
+      
+      if (!API_KEY) {
+        showNotification('请先设置API密钥', 'warning');
+        openSettings();
+        return;
+      }
+      
+      document.getElementById('loadingAnimation').style.display = 'flex';
+      document.getElementById('output').style.display = 'block';
+      document.getElementById('interviewContent').innerHTML = '';
+      
+      try {
+        const response = await fetch('https://api.deepseek.com/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${API_KEY}`
+          },
+          body: JSON.stringify({
+            model: "deepseek-chat",
+            messages: [
+              {"role": "system", "content": "你是一个专业的情感访谈节目主持人，能够生成深度的情感对话。一定要返回合法的json数据,speaker是主持人,嘉宾,专家之一，格式参考：[{'id': 1,'speaker': '主持人','text': '','emotion': ''}]"},
+              {"role": "user", "content": `生成一个关于"${topic}"的深度情感访谈对话。访谈嘉宾背景：${guestBackground}。情感专家类型：${getExpertTitle(expertType)}。请生成一个包含主持人、嘉宾和专家的对话，每个发言都包含说话者、内容和情感标签。`}
+            ],
+            stream: false
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('API请求失败');
+        }
+
+        const data = await response.json();
+        interviewDialogue = JSON.parse(data.choices[0].message.content);
+        
+        const dialogueHtml = interviewDialogue.map(message => 
+          `<div class="dialogue-message">
+            <div class="dialogue-speaker">${message.speaker}<span class="emotion-tag">${message.emotion}</span></div>
+            <div>${message.text}</div>
+          </div>`
+        ).join('');
+        
+        document.getElementById('interviewContent').innerHTML = dialogueHtml;
+        document.getElementById('audioSection').style.display = 'block';
+      } catch (error) {
+        console.error('Error:', error);
+        showNotification('生成访谈内容时出错，请重试。', 'error');
+      } finally {
+        document.getElementById('loadingAnimation').style.display = 'none';
+      }
+    }
+
+    async function generatePodcast() {
+      if (interviewDialogue.length === 0) {
+        showNotification('请先生成访谈内容', 'warning');
+        return;
+      }
+      
+      if (!VOICE_API_KEY) {
+        showNotification('请先设置语音API密钥', 'warning');
+        openSettings();
+        return;
+      }
+      
+      document.getElementById('podcastContent').innerHTML = '<p>正在生成播客音频，请稍候...</p>';
+      const audioPlaylist = document.getElementById('audioPlaylist');
+      audioPlaylist.innerHTML = '';
+      audioUrls = [];
+      
+      for (let i = 0; i < interviewDialogue.length; i++) {
+        const dialogue = interviewDialogue[i];
+        try {
+          const response = await fetch('http://127.0.0.1:3000/api/tts/simple-generate', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${VOICE_API_KEY}`
+            },
+            body: JSON.stringify({
+              "voiceId": getVoiceId(dialogue.speaker),
+              "text": dialogue.text,
+              "texts": [dialogue.text],
+              "promptId": "default",
+              "randomness": 98,
+              "stability_boost": 256,
+              "probability_optimization": 93,
+              "break_clone": true,
+              "sharpen": false,
+              "flash": false,
+              "stream": false,
+              "srt": false,
+              "seed": -1,
+              "dictionary": [{}],
+              "model": "reecho-neural-voice-001",
+              "origin_audio": false
+            })
+          });
+
+          if (!response.ok) {
+            throw new Error('音频生成API请求失败');
+          }
+
+          const data = await response.json();
+          const audioUrl = data.data.audio;
+          audioUrls.push(audioUrl);
+
+          const li = document.createElement('li');
+          li.className = 'fade-in';
+          li.innerHTML = `
+            <button onclick="playAudio('${audioUrl}', this)">播放</button>
+            <span>${dialogue.speaker}: ${dialogue.text}</span>
+          `;
+          audioPlaylist.appendChild(li);
+
+          updateProgressBar((i + 1) / interviewDialogue.length * 100);
+        } catch (error) {
+          console.error('Error generating audio:', error);
+          showNotification('生成音频时出错，请重试。', 'error');
+        }
+      }
+
+      document.getElementById('podcastContent').innerHTML = '<p>播客音频生成完成，请在下方列表中播放。</p>';
+      document.getElementById('autoPlayBtn').style.display = 'block';
+    }
+
+    function playAudio(url, button) {
+      audioPlayer.src = url;
+      audioPlayer.play();
+      button.textContent = '播放中';
+      audioPlayer.onended = () => button.textContent = '播放';
+    }
+
+    function playNextAudio() {
+      if (currentAudioIndex < audioUrls.length) {
+        audioPlayer.src = audioUrls[currentAudioIndex];
+        audioPlayer.play();
+        currentAudioIndex++;
+      } else {
+        console.log("All audio files played");
+      }
+    }
+
+    audioPlayer.addEventListener('ended', playNextAudio);
+
+    function startAutoPlay() {
+      currentAudioIndex = 0;
+      playNextAudio();
+    }
+
+    function getExpertTitle(expertType) {
+      const titles = {
+        'psychologist': '心理学家',
+        'relationshipCounselor': '关系咨询师',
+        'sociologist': '社会学家',
+        'familyTherapist': '家庭治疗师'
+      };
+      return titles[expertType] || '专家';
+    }
+
+    function getVoiceId(speaker) {
+      const voiceIds = {
+        '主持人': '1d041342-e6b7-41f3-8f3f-6fb0fdee94af',
+        '嘉宾': 'fe67f6a7-e6f8-4aa2-a8be-7899dfe818eb',
+        '专家': '3a501dda-b2f9-42fe-be08-e744914dd4bf'
+      };
+      return voiceIds[speaker] || '1d041342-e6b7-41f3-8f3f-6fb0fdee94af';
+    }
+
+    function updateProgressBar(percentage) {
+      const progressBar = document.getElementById('audioProgress');
+      progressBar.style.width = `${percentage}%`;
+    }
+
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.className = `notification ${type}`;
+      notification.textContent = message;
+      document.body.appendChild(notification);
+      setTimeout(() => notification.remove(), 5000);
+    }
+
+    document.getElementById('backgroundMusicUpload').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      const url = URL.createObjectURL(file);
+      backgroundMusic.src = url;
+      document.getElementById('musicControls').style.display = 'block';
+      document.getElementById('backgroundMusicIcon').style.display = 'block';
+    });
+
+    document.getElementById('playPauseMusic').addEventListener('click', function() {
+      if (backgroundMusic.paused) {
+        backgroundMusic.play();
+      } else {
+        backgroundMusic.pause();
+      }
+    });
+
+    document.getElementById('volumeControl').addEventListener('input', function(e) {
+      backgroundMusic.volume = e.target.value;
+    });
+
+    backgroundMusic.addEventListener('play', function() {
+      document.getElementById('rotatingMusicIcon').style.animationPlayState = 'running';
+    });
+
+    backgroundMusic.addEventListener('pause', function() {
+      document.getElementById('rotatingMusicIcon').style.animationPlayState = 'paused';
+    });
+
+    function toggleInterviewContent() {
+      const content = document.getElementById('interviewContent');
+      const icon = document.getElementById('toggleIcon');
+      if (content.style.display === 'none') {
+        content.style.display = 'block';
+        icon.textContent = '▼';
+      } else {
+        content.style.display = 'none';
+        icon.textContent = '▶';
+      }
+    }
+  </script>
+</body></html>
