@@ -26,9 +26,6 @@ const server = http.createServer(function(req, res) {
   // 代理请求到目标服务器
   proxy.web(req, res, {
     target: target,
-    headers: {
-      'Authorization': 'Bearer sk-8c9814aa4cde3e98b11d3ef5538a926f'
-    }
   });
 });
 
