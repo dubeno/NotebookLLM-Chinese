@@ -1,13 +1,38 @@
-如何运行
+# NotebookLLM-Chinese
+这是一个由AI生成的基于Electron的跨平台的中文版NoteBookLM，该应用可以使用LLM生成具有深度的访谈对话文本，同时基于
+文本可以继续生成富有情感的语音，访谈预设三个角色【嘉宾、主持人、专家】，访谈的形式是嘉宾提出问题或者主题
+主持人负责采访和深挖主题，专家负责解读访谈的内容，升华内容。
 
+# 应用界面
+## 设置主题和嘉宾背景
+![img.png](assets/img4.png)
+
+## 访谈内容
+![img.png](assets/img5.png)
+
+## 生成音频
+![img_4.png](assets/img_4.png)
+
+## 音频播放
+![img_4.png](assets/img_5.png)
+
+## 设置API KEY和背景音乐
+![img_3.png](assets/img_6.png)
+
+# 小白入门
+直接下载：Releases v1.1.0-bata
+https://github.com/dubeno/NotebookLLM-Chinese/releases/download/v1.1.0-bata/my-electron-app-win32-x64-boke.zip
+配置方式，参考B站视频内有说明：
+https://www.bilibili.com/video/BV1bJ2YYwE27/?vd_source=44e03001713390fdf7b8b166f2d8d72b
+
+# 程序开发
 npm install 安装依赖
-
 本地运行: 
     npm start
 导出windows exe: 
     npm run build
     
-程序设置
+# 开发密钥设置
 
 需要设置APIkey 和角色配置，目前使用本人共享密钥，额度用完就无法使用，需要自己申请密钥
 
