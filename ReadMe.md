@@ -23,7 +23,7 @@
 直接下载：Releases v1.1.0-bata
 https://github.com/dubeno/NotebookLLM-Chinese/releases/download/v1.1.0-bata/my-electron-app-win32-x64-boke.zip
 配置方式，参考B站视频内有说明：
-https://www.bilibili.com/video/BV1bJ2YYwE27/?vd_source=44e03001713390fdf7b8b166f2d8d72b
+https://www.bilibili.com/video/BV11nDHYiEqW/?vd_source=44e03001713390fdf7b8b166f2d8d72b
 
 # 程序开发
 npm install 安装依赖
